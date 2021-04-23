@@ -5,3 +5,5 @@ services:
       context: .
     ports:
       - 5900:5900
+    volumes:
+      - .:/root/Desktop/work
