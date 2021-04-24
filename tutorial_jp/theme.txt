@@ -1,0 +1,15 @@
+＊人の死
+死後 or 死病 or 死期 or 死因 or 死骸 or 生死 or 自殺 or 殉死 or 頓死 or 変死 or 亡 or 死ぬ or 亡くなる or 殺す or 亡くす or 死
+
+＊恋愛
+愛 or 恋 or 愛す or 愛情 or 恋人 or 愛人 or 恋愛 or 失恋 or 恋しい 
+
+＊友情
+友達 or 友人 or 旧友 or 親友 or 朋友 or 友 or 級友
+
+＊信用・不信
+信用 or 信じる or 信ずる
+or 不信 or 疑い or 疑惑 or 疑念 owr 猜疑 or 狐疑 or 疑問 or 疑い深い or 疑う or 疑る or 警戒
+
+＊病気
+ 医者 or 病人 or 病室 or 病院 or 病症 or 病状 or 持病 or 死病 or 主治医 or 精神病 or 仮病 or 病気 or 看病 or 大病 or 病む or 病
