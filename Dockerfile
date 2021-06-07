@@ -1,11 +1,18 @@
 FROM ubuntu:18.04
 
 ENV DEBIAN_FRONTEND=noninteractive \
+    LANG=ja_JP.UTF-8 \
+    LC_ALL=${LANG} \
+    LANGUAGE=${LANG} \
     TZ=Asia/Tokyo
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
     echo $TZ > /etc/timezone && \
     apt -y update && \
     apt -y install \
+        fonts-noto \
+        ibus-anthy \
+        language-pack-ja \
+        language-pack-ja-base \
         supervisor \
         xvfb \
         xfce4 \
@@ -15,7 +22,10 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
     apt clean && \
     rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/* && \
     mkdir -p ~/.vnc && \
-    x11vnc -storepasswd secret ~/.vnc/passwd
+    x11vnc -storepasswd secret ~/.vnc/passwd && \
+    locale-gen ja_JP.UTF-8 && \
+    localedef -f UTF-8 -i ja_JP ja_JP.utf8 && \
+    LANG=C xdg-user-dirs-update --force
 RUN { \
         echo "[supervisord]" ; \
         echo "nodaemon=true" ; \
@@ -43,6 +53,11 @@ RUN { \
         echo "autorestart=true" ; \
         echo "stdout_logfile=/var/log/x11vnc.log" ; \
         echo "stderr_logfile=/var/log/x11vnc.err" ; \
+        echo "" ; \
+        echo "[program:ibus-daemon]" ; \
+        echo "command=ibus-daemon" ; \
+        echo "autorestart=true" ; \
+        echo "environment=DISPLAY=':0',HOME='/root',USER='root'" ; \
     } > /etc/supervisor/conf.d/desktop.conf
 EXPOSE 5900
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
