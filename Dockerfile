@@ -30,8 +30,6 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
     && \
     apt-get clean && \
     rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/* && \
-    mkdir -p ~/.vnc && \
-    x11vnc -storepasswd secret ~/.vnc/passwd && \
     locale-gen ja_JP.UTF-8 && \
     localedef -f UTF-8 -i ja_JP ja_JP.utf8 && \
     echo LANG=$LANG >> /etc/default/locale && \
@@ -225,6 +223,29 @@ RUN { \
         echo "app_csv	soffice -calc %s &" ; \
         echo "app_pdf	acroread %s &" ; \
     } > config/coder.ini
+RUN { \
+        echo '#!/bin/sh' ; \
+        echo 'set -eu' ; \
+        echo '' ; \
+        echo 'export HOME=/root' ; \
+        echo 'mkdir -p /root/.vnc' ; \
+        echo '' ; \
+        echo 'if [ -n "${VNC_PASSWORD:-}" ]; then' ; \
+        echo '  PW="$VNC_PASSWORD"' ; \
+        echo 'else' ; \
+        echo '  PW="$(python3 -c '"'"'import secrets; print(secrets.token_urlsafe(14))'"'"')"' ; \
+        echo '  echo >&2 "============================================================"' ; \
+        echo '  echo >&2 "VNC password (random). Set VNC_PASSWORD to use your own."' ; \
+        echo '  echo >&2 "${PW}"' ; \
+        echo '  echo >&2 "============================================================"' ; \
+        echo 'fi' ; \
+        echo '' ; \
+        echo 'x11vnc -storepasswd "$PW" /root/.vnc/passwd' ; \
+        echo '' ; \
+        echo 'exec "$@"' ; \
+    } > /usr/local/bin/docker-entrypoint.sh && \
+    chmod 0755 /usr/local/bin/docker-entrypoint.sh
 EXPOSE 5900
 WORKDIR /root/Desktop/work
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]

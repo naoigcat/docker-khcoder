@@ -25,13 +25,42 @@ docker pull naoigcat/khcoder
 ## Usage
 
 ```sh
-docker run --rm --detach --publish 5900:5900 --volume ${PWD}:/root/Desktop/work naoigcat/khcoder
+docker run --rm --detach --publish 127.0.0.1:5900:5900 --volume "${PWD}:/root/Desktop/work" naoigcat/khcoder
 open vnc://localhost:5900
 ```
 
--   Password for VNC: `secret`
+Set `VNC_PASSWORD` or read the generated password from container logs; see **VNC** below.
 
-## [Tutorial](http://khcoder.net/tutorial.html)
+### VNC
+
+The container runs [x11vnc](https://github.com/LibVNC/x11vnc) on port **5900**. The VNC password is **not** baked into the image.
+
+-   **`VNC_PASSWORD`**: If you set this environment variable, that string is used as the VNC password when the container starts.
+-   **If `VNC_PASSWORD` is unset**: A random password is generated at startup. It is printed once to **standard error**, so read it with `docker logs` (or your orchestrator’s log view) before connecting.
+
+Example with your own password:
+
+```sh
+docker run --rm --detach \
+  --publish 127.0.0.1:5900:5900 \
+  --env VNC_PASSWORD='choose-a-strong-password' \
+  --volume "${PWD}:/root/Desktop/work" \
+  naoigcat/khcoder
+```
+
+Example using a random password (check logs):
+
+```sh
+CID=$(docker run --rm --detach --publish 127.0.0.1:5900:5900 --volume "${PWD}:/root/Desktop/work" naoigcat/khcoder)
+docker logs "$CID" 2>&1
+```
+
+Security notes:
+
+-   Prefer **`127.0.0.1:5900:5900`** (as above) so VNC is only reachable from the host, unless you intentionally need remote access and protect it (VPN, SSH tunnel, firewall, etc.).
+-   Do not expose port 5900 on untrusted networks without additional controls.
+
+## [Tutorial](https://khcoder.net/tutorial.html)
 
 1.  Click 'Menu' > 'Project' > 'New'
 1.  Click 'Browse'
