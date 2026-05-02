@@ -153,7 +153,7 @@ RUN { \
         echo "command=/usr/bin/leafpad" ; \
     } > /etc/supervisor/conf.d/desktop.conf && \
     cd /root/Desktop && \
-    wget -O - http://khcoder.net/tutorial_data_3x.zip | busybox unzip -d /root/Desktop - && \
+    wget -O - https://khcoder.net/tutorial_data_3x.zip | busybox unzip -d /root/Desktop - && \
     git clone https://github.com/ko-ichi-h/khcoder.git -b 3.Beta.07h && \
     cd khcoder && \
     { \
