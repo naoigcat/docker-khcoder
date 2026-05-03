@@ -18,7 +18,6 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
         language-pack-ja-base \
         leafpad \
         locales \
-        python3-pip \
         software-properties-common \
         supervisor \
         x11vnc \
@@ -42,16 +41,20 @@ RUN apt-get -y update && \
     mkdir -p /var/run/mysqld && \
     chown mysql:mysql /var/run/mysqld && \
     apt-get -y install \
+        build-essential \
         cpanminus \
+        libdbd-mysql-perl \
+        libmecab-dev \
         libmysqlclient-dev \
         libyaml-perl \
+        mecab \
+        mecab-ipadic-utf8 \
         tk-dev \
     && \
     perl -MCPAN -e 'install Jcode' && \
     perl -MCPAN -e 'install Tk' && \
     perl -MCPAN -e 'install DBI' && \
     perl -MCPAN -e 'install DBD::CSV' && \
-    perl -MCPAN -e 'install DBD::mysql' && \
     perl -MCPAN -e 'install File::BOM' && \
     perl -MCPAN -e 'install Net::Telnet' && \
     perl -MCPAN -e 'install Proc::Background' && \
@@ -85,27 +88,22 @@ RUN apt-get -y update && \
     R -e 'require("remotes"); install_version("wordcloud")' && \
     apt-get clean && \
     rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
-RUN pip3 install gdown && \
-    gdown 0B4y35FiV1wh7cENtOXlicTFaRUE && \
-    tar zxvf mecab-0.996.tar.gz && \
-    cd mecab-0.996/ && \
-    case $(dpkg --print-architecture) in arm64) ./configure --with-charset=utf8 --build=arm ;; *) ./configure --with-charset ;; esac && \
-    make install && \
-    cd .. && \
-    rm -rf mecab-0.996* && \
-    gdown 0B4y35FiV1wh7MWVlSDBCSXZMTXM && \
-    tar zxfv mecab-ipadic-2.7.0-20070801.tar.gz && \
-    cd mecab-ipadic-2.7.0-20070801 && \
-    case $(dpkg --print-architecture) in arm64) ./configure --with-charset=utf8 --build=arm ;; *) ./configure --with-charset ;; esac && \
-    ldconfig && \
-    make install && \
-    cd .. && \
-    rm -rf mecab-ipadic-2.7.0-20070801*
+RUN apt-get -y update && \
+    apt-get -y install \
+        libfile-copy-recursive-perl \
+    && \
+    apt-get clean && \
+    rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
 RUN { \
         echo "[supervisord]" ; \
         echo "nodaemon=true" ; \
+        echo "user=root" ; \
+        echo "silent=true" ; \
+        echo "logfile=/var/log/supervisord.log" ; \
+        echo "pidfile=/var/run/supervisord.pid" ; \
         echo "" ; \
         echo "[program:X11]" ; \
+        echo "priority=1" ; \
         echo "command=/usr/bin/Xvfb :0 -screen 0 1280x800x16" ; \
         echo "autorestart=true" ; \
         echo "stdout_logfile=/var/log/Xvfb.log" ; \
@@ -248,4 +246,4 @@ RUN { \
 EXPOSE 5900
 WORKDIR /root/Desktop/work
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/desktop.conf"]
