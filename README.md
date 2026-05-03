@@ -38,12 +38,14 @@ The container runs [x11vnc](https://github.com/LibVNC/x11vnc) on port **5900**. 
 -   **`VNC_PASSWORD`**: If you set this environment variable, that string is used as the VNC password when the container starts.
 -   **If `VNC_PASSWORD` is unset**: A random password is generated at startup. It is printed once to **standard error**, so read it with `docker logs` (or your orchestrator’s log view) before connecting.
 
+Classic VNC authentication uses exactly 8 characters. The container rejects shorter or longer custom passwords so the effective password strength is clear.
+
 Example with your own password:
 
 ```sh
 docker run --rm --detach \
   --publish 127.0.0.1:5900:5900 \
-  --env VNC_PASSWORD='choose-a-strong-password' \
+  --env VNC_PASSWORD='aB3dE5gH' \
   --volume "${PWD}:/root/Desktop/work" \
   naoigcat/khcoder
 ```

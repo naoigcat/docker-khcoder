@@ -249,19 +249,26 @@ RUN { \
         echo 'set -eu' ; \
         echo '' ; \
         echo 'export HOME=/root' ; \
+        echo 'umask 077' ; \
         echo 'mkdir -p /root/.vnc' ; \
         echo '' ; \
         echo 'if [ -n "${VNC_PASSWORD:-}" ]; then' ; \
         echo '  PW="$VNC_PASSWORD"' ; \
         echo 'else' ; \
-        echo '  PW="$(python3 -c '"'"'import secrets; print(secrets.token_urlsafe(14))'"'"')"' ; \
+        echo '  PW="$(python3 -c '"'"'import secrets, string; alphabet = string.ascii_letters + string.digits; print("".join(secrets.choice(alphabet) for _ in range(8)))'"'"')"' ; \
         echo '  echo >&2 "============================================================"' ; \
         echo '  echo >&2 "VNC password (random). Set VNC_PASSWORD to use your own."' ; \
         echo '  echo >&2 "${PW}"' ; \
         echo '  echo >&2 "============================================================"' ; \
         echo 'fi' ; \
         echo '' ; \
+        echo 'if [ "${#PW}" -ne 8 ]; then' ; \
+        echo '  echo >&2 "VNC password must be exactly 8 characters because classic VNC authentication truncates longer values."' ; \
+        echo '  exit 1' ; \
+        echo 'fi' ; \
+        echo '' ; \
         echo 'x11vnc -storepasswd "$PW" /root/.vnc/passwd' ; \
+        echo 'chmod 0600 /root/.vnc/passwd' ; \
         echo '' ; \
         echo 'exec "$@"' ; \
     } > /usr/local/bin/docker-entrypoint.sh && \
