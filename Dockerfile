@@ -170,7 +170,9 @@ RUN { \
         echo "stderr_logfile_maxbytes=0" ; \
     } > /etc/supervisor/conf.d/desktop.conf && \
     cd /root/Desktop && \
-    wget -O - https://khcoder.net/tutorial_data_3x.zip | busybox unzip -d /root/Desktop - && \
+    wget --https-only --secure-protocol=TLSv1_2 --output-document=/tmp/tutorial_data_3x.zip https://khcoder.net/tutorial_data_3x.zip && \
+    busybox unzip -d /root/Desktop /tmp/tutorial_data_3x.zip && \
+    rm -f /tmp/tutorial_data_3x.zip && \
     git clone https://github.com/ko-ichi-h/khcoder.git -b 3.Beta.07h && \
     cd khcoder && \
     { \
