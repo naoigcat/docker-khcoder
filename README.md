@@ -60,6 +60,11 @@ Security notes:
 -   Prefer **`127.0.0.1:5900:5900`** (as above) so VNC is only reachable from the host, unless you intentionally need remote access and protect it (VPN, SSH tunnel, firewall, etc.).
 -   Do not expose port 5900 on untrusted networks without additional controls.
 
+### Japanese Input
+
+The VNC desktop starts IBus Anthy, so Japanese can be entered directly in KH Coder from macOS VNC clients.
+If the input method is still English, select Anthy from the IBus indicator in the desktop panel.
+
 ## [Tutorial](https://khcoder.net/tutorial.html)
 
 1.  Click `プロジェクト` > `新規` of menu
@@ -70,7 +75,6 @@ Security notes:
 1.  Click `OK`
 1.  Click `前処理` > `語の取捨選択` of menu
 1.  Enter `一人` and `二人` to `強制選択する語の指定`
-    -   Since Japanese cannot be entered directly on the KH Coder screen, enter it in Leafpad and then copy and paste.
     -   It is possible to force the extraction of words that are not extracted as a single word even though they are important words.
     -   It is also effective when the division is too fine, such that `一人` is divided into `一` and `人`.
     -   It is useful for identifying too fine divisions executing `前処理` > `複合語の検出` > `名詞を連結` of menu.
@@ -83,4 +87,3 @@ Security notes:
 -   Since DBD::CSV was not installed the first time, `install DBD::CSV` is executed twice.
 -   Since the old version of the R packages could not be installed from official repository, it is installed using the `remote` package.
 -   Since the name of the Desktop directory changes depending on the language, it is fixed to English by executing `LANG=C xdg-user-dirs-update --force`.
--   Since Japanese could not be entered directly into KH Coder, it is assumed to be input to Leafpad and copy and paste to KH Coder.

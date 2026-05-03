@@ -4,6 +4,9 @@ ENV DEBIAN_FRONTEND=noninteractive \
     LANG=ja_JP.UTF-8 \
     LC_ALL=ja_JP.UTF-8 \
     LANGUAGE=ja_JP.UTF-8 \
+    GTK_IM_MODULE=ibus \
+    QT_IM_MODULE=ibus \
+    XMODIFIERS=@im=ibus \
     PERL_MM_USE_DEFAULT=1 \
     TZ=Asia/Tokyo
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
@@ -11,12 +14,14 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
     apt-get -y update && \
     apt-get -y install \
         busybox \
+        dbus-x11 \
         fonts-noto \
         git \
         ibus-anthy \
+        ibus-gtk \
+        ibus-gtk3 \
         language-pack-ja \
         language-pack-ja-base \
-        leafpad \
         locales \
         software-properties-common \
         supervisor \
@@ -95,6 +100,24 @@ RUN apt-get -y update && \
     apt-get clean && \
     rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
 RUN { \
+        echo '#!/bin/sh' ; \
+        echo 'set -u' ; \
+        echo '' ; \
+        echo '/usr/bin/ibus-daemon --xim --replace &' ; \
+        echo 'IBUS_PID="$!"' ; \
+        echo '' ; \
+        echo '# IBus and Xvfb start independently under supervisor, so wait until the bus accepts engine changes.' ; \
+        echo 'for _ in 1 2 3 4 5 6 7 8 9 10; do' ; \
+        echo '  if /usr/bin/ibus engine anthy; then' ; \
+        echo '    break' ; \
+        echo '  fi' ; \
+        echo '  sleep 1' ; \
+        echo 'done' ; \
+        echo '' ; \
+        echo 'wait "$IBUS_PID"' ; \
+    } > /usr/local/bin/start-ibus-anthy.sh && \
+    chmod 0755 /usr/local/bin/start-ibus-anthy.sh && \
+    { \
         echo "[supervisord]" ; \
         echo "nodaemon=true" ; \
         echo "user=root" ; \
@@ -117,7 +140,7 @@ RUN { \
         echo "autostart=true" ; \
         echo "autorestart=true" ; \
         echo "stopsignal=QUIT" ; \
-        echo "environment=DISPLAY=':0',HOME='/root'" ; \
+        echo "environment=DISPLAY=':0',HOME='/root',GTK_IM_MODULE='ibus',QT_IM_MODULE='ibus',XMODIFIERS='@im=ibus'" ; \
         echo "stdout_logfile=/var/log/xfce4.log" ; \
         echo "stderr_logfile=/var/log/xfce4.err" ; \
         echo "" ; \
@@ -128,9 +151,10 @@ RUN { \
         echo "stderr_logfile=/var/log/x11vnc.err" ; \
         echo "" ; \
         echo "[program:ibus-daemon]" ; \
-        echo "command=ibus-daemon" ; \
+        echo "priority=5" ; \
+        echo "command=/usr/local/bin/start-ibus-anthy.sh" ; \
         echo "autorestart=true" ; \
-        echo "environment=DISPLAY=':0',HOME='/root',USER='root'" ; \
+        echo "environment=DISPLAY=':0',HOME='/root',USER='root',GTK_IM_MODULE='ibus',QT_IM_MODULE='ibus',XMODIFIERS='@im=ibus'" ; \
         echo "" ; \
         echo "[program:mysql]" ; \
         echo "command=/usr/bin/pidproxy /var/run/mysqld/mysqld.pid /usr/bin/mysqld_safe --datadir=/var/lib/mysql --socket=/var/run/mysqld/mysqld.sock --pid-file=/var/run/mysqld/mysqld.pid --basedir=/usr --user=mysql" ; \
@@ -139,14 +163,11 @@ RUN { \
         echo "[program:khcoder]" ; \
         echo "directory=/root/Desktop/khcoder" ; \
         echo "command=perl /root/Desktop/khcoder/kh_coder.pl" ; \
+        echo "environment=DISPLAY=':0',HOME='/root',GTK_IM_MODULE='ibus',QT_IM_MODULE='ibus',XMODIFIERS='@im=ibus'" ; \
         echo "stdout_logfile=/dev/fd/1" ; \
         echo "stdout_logfile_maxbytes=0" ; \
         echo "stderr_logfile=/dev/fd/2" ; \
         echo "stderr_logfile_maxbytes=0" ; \
-        echo "" ; \
-        echo "[program:leafpad]" ; \
-        echo "environment=DISPLAY=:0.0" ; \
-        echo "command=/usr/bin/leafpad" ; \
     } > /etc/supervisor/conf.d/desktop.conf && \
     cd /root/Desktop && \
     wget -O - https://khcoder.net/tutorial_data_3x.zip | busybox unzip -d /root/Desktop - && \
