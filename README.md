@@ -62,21 +62,21 @@ Security notes:
 
 ## [Tutorial](https://khcoder.net/tutorial.html)
 
-1.  Click 'Menu' > 'Project' > 'New'
-1.  Click 'Browse'
+1.  Click `プロジェクト` > `新規` of menu
+1.  Click `分析対象ファイル` > `参照`
 1.  Open `/root/Desktop/tutorial_jp/kokoro.xls`
-1.  Confirm that `テキスト` is selected for the column to be analyzed
-1.  Confirm that `日本語`, `MeCab` is selected for the language
-1.  Click 'OK'
-1.  Click 'Menu' > 'PRe-Processing' > 'Select Words to Analyze'
-1.  Enter `一人` and `二人` to 'Pick up following strings as words:'
+1.  Confirm that `テキスト` is selected for `分析対象とする列`
+1.  Confirm that `日本語`, `MeCab` is selected for `言語`
+1.  Click `OK`
+1.  Click `前処理` > `語の取捨選択` of menu
+1.  Enter `一人` and `二人` to `強制選択する語の指定`
     -   Since Japanese cannot be entered directly on the KH Coder screen, enter it in Leafpad and then copy and paste.
     -   It is possible to force the extraction of words that are not extracted as a single word even though they are important words.
     -   It is also effective when the division is too fine, such that `一人` is divided into `一` and `人`.
-    -   It is useful for identifying too fine divisions executing 'Menu' > 'PRe-Processing' > 'Word Clusters'.
-1.  Click 'OK'
-1.  Click 'Menu' > 'PRe-Processing' > 'Run Pre-Processing'
-1.  Click 'OK'
+    -   It is useful for identifying too fine divisions executing `前処理` > `複合語の検出` > `名詞を連結` of menu.
+1.  Click `OK`
+1.  Click `前処理` > `前処理の実行` of menu
+1.  Click `OK`
 
 ## Note
 
