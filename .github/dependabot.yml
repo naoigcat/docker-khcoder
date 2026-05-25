@@ -8,7 +8,9 @@ updates:
       time: "09:00"
       timezone: Asia/Tokyo
     open-pull-requests-limit: 5
-
+    cooldown:
+      default-days: 3
+      semver-major-days: 7
   - package-ecosystem: github-actions
     directory: /
     schedule:
@@ -17,3 +19,6 @@ updates:
       time: "09:00"
       timezone: Asia/Tokyo
     open-pull-requests-limit: 5
+    cooldown:
+      default-days: 3
+      semver-major-days: 7
