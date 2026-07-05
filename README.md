@@ -11,8 +11,9 @@
 
 -   KH Coder 3.Beta.07h
 -   Ubuntu 26.04
--   Perl 5.26.1
--   R 3.4.4
+-   Perl 5.40.1
+-   R 4.5.2
+-   MySQL 8.4.10
 -   MeCab 0.996
 -   MeCab IPADic 2.7.0-20070801
 
