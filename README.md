@@ -10,7 +10,7 @@
 ## Dependencies
 
 -   KH Coder 3.Beta.07h
--   Ubuntu 18.04
+-   Ubuntu 26.04
 -   Perl 5.26.1
 -   R 3.4.4
 -   MeCab 0.996

@@ -40,8 +40,8 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
     LANG=C xdg-user-dirs-update --force
 RUN apt-get -y update && \
     apt-get -y install \
-        "mysql-server=5.7.*" \
-        "mysql-client=5.7.*" \
+        "mysql-server" \
+        "mysql-client" \
     && \
     mkdir -p /var/run/mysqld && \
     chown mysql:mysql /var/run/mysqld && \
@@ -50,7 +50,7 @@ RUN apt-get -y update && \
         cpanminus \
         libdbd-mysql-perl \
         libmecab-dev \
-        libmysqlclient-dev \
+        default-libmysqlclient-dev \
         libyaml-perl \
         mecab \
         mecab-ipadic-utf8 \
